@@ -1,14 +1,8 @@
-class Efl.Model.Composite.Boolean.Children (Efl.Object, Efl.Model)
+class Efl.Model.Composite.Boolean.Children (Efl.Model.Composite)
 {
    [[Efl model composite boolean children class]]
    implements {
-      Efl.Object.destructor;
       Efl.Model.properties { get; }
-      Efl.Model.property_get;
-      Efl.Model.property_set;
-      Efl.Model.children_slice_get;
-      Efl.Model.children_count_get;
-      Efl.Model.child_add;
-      Efl.Model.child_del;
+      Efl.Model.property { get; set; }
    }
 }
