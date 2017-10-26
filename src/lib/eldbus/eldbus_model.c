@@ -153,7 +153,7 @@ _eldbus_model_efl_model_properties_get(Eo *obj EINA_UNUSED,
    Eina_Array *r;
 
    r = eina_array_new(1);
-   eina_array_push(r, UNIQUE_NAME_PROPERTY);
+   eina_array_push(r, eina_stringshare_add(UNIQUE_NAME_PROPERTY));
 
    return r;
 }
