@@ -322,6 +322,12 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_list_relayout.eo.h>
 # include <efl_ui_list.eo.h>
 # include <efl_ui_list_pan.eo.h>
+
+# ifndef _EFL_UI_PAGER_EO_CLASS_TYPE
+# define _EFL_UI_PAGER_EO_CLASS_TYPE
+typedef Eo Efl_Ui_Pager;
+# endif
+
 # include <efl_page_transition.eo.h>
 # include <efl_page_transition_scroll.eo.h>
 # include <efl_ui_pager.eo.h>
