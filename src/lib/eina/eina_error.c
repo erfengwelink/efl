@@ -314,7 +314,7 @@ eina_error_msg_get(Eina_Error error)
              const char *str = NULL;
 
 #ifdef HAVE_STRERROR_R
-# ifndef STRERROR_R_CHAR_P
+# if _POSIX_C_SOURCE >= 200112L && ! _GNU_SOURCE
              int ret;
 
              ret = strerror_r(error, buf, sizeof(buf)); /* XSI */
@@ -322,9 +322,9 @@ eina_error_msg_get(Eina_Error error)
                str = buf;
              else if (ret == EINVAL)
                return NULL;
-# else /* STRERROR_R_CHAR_P */
+# else /* _POSIX_C_SOURCE >= 200112L && ! _GNU_SOURCE */
              str = strerror_r(error, buf, sizeof(buf)); /* GNU */
-# endif /* ! STRERROR_R_CHAR_P */
+# endif /* ! (_POSIX_C_SOURCE >= 200112L && ! _GNU_SOURCE) */
 #else
               /* not so good fallback. Usually strerror(err) will
                * return a const string if a known error (what we use),
