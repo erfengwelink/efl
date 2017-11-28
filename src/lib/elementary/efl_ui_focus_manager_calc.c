@@ -77,18 +77,45 @@ typedef struct {
     Node *root;
 } Efl_Ui_Focus_Manager_Calc_Data;
 
+static Eina_Bool
+_validate_redirect(Eo *obj, Efl_Ui_Focus_Manager *manager)
+{
+   Eo *new_obj = obj;
+   if (new_obj == manager) goto err;
+
+   while(efl_composite_part_is(new_obj))
+     {
+        new_obj = efl_parent_get(new_obj);
+        if (new_obj == manager) goto err;
+     }
+
+   new_obj = manager;
+
+   while(efl_composite_part_is(new_obj))
+     {
+        new_obj = efl_parent_get(new_obj);
+        if (new_obj == obj) goto err;
+     }
+
+   return EINA_TRUE;
+err:
+   ERR("Manager %p is a composition part of %p", obj, manager);
+
+   return EINA_FALSE;
+}
+
 static void
 _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    EINA_SAFETY_ON_NULL_RETURN(pd->root);
+   Eo *roots_manager = efl_ui_focus_user_manager_get(pd->root->focusable);
 
    if (!efl_isa(pd->root->focusable, EFL_UI_WIN_CLASS))
-     EINA_SAFETY_ON_NULL_RETURN(efl_ui_focus_user_manager_get(pd->root->focusable));
+     EINA_SAFETY_ON_NULL_RETURN(roots_manager);
 
-   //so we dont run infinitly this does not fix it, but at least we only have a error
-   EINA_SAFETY_ON_TRUE_RETURN(efl_ui_focus_user_manager_get(pd->root->focusable) == obj);
+   EINA_SAFETY_ON_FALSE_RETURN(_validate_redirect(obj, roots_manager));
 
-   efl_ui_focus_manager_focus_set(efl_ui_focus_user_manager_get(pd->root->focusable), pd->root->focusable);
+   efl_ui_focus_manager_focus_set(roots_manager, pd->root->focusable);
 }
 
 static Efl_Ui_Focus_Direction
@@ -589,6 +616,7 @@ _register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *chil
 
    return node;
 }
+
 EOLIAN static Eina_Bool
 _efl_ui_focus_manager_calc_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *child, Efl_Ui_Focus_Object *parent,  Efl_Ui_Focus_Manager *redirect)
 {
@@ -610,6 +638,10 @@ _efl_ui_focus_manager_calc_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Calc_D
    if (!node) return EINA_FALSE;
 
    node->type = NODE_TYPE_ONLY_LOGICAL;
+
+   if (!_validate_redirect(obj, redirect))
+     return EINA_FALSE;
+
    node->redirect_manager = redirect;
 
    //set again
@@ -671,6 +703,9 @@ _efl_ui_focus_manager_calc_update_redirect(Eo *obj, Efl_Ui_Focus_Manager_Calc_Da
 {
    Node *node = node_get(obj, pd, child);
    if (!node) return EINA_FALSE;
+
+   if (!_validate_redirect(obj, redirect))
+     return EINA_FALSE;
 
    if (redirect)
      EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(redirect, MY_CLASS), EINA_FALSE);
