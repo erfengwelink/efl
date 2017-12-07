@@ -2072,6 +2072,7 @@ EOAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OBJECT;
  * @brief Create a new #Eina_Value containing the passed parameter.
  * @param obj The object to use
  * @return The #Eina_Value
+ * @see eina_value_object_get(), eina_value_object_init()
  * @since 1.21
  */
 static inline Eina_Value *
@@ -2088,6 +2089,7 @@ eina_value_object_new(Eo *obj)
  * @brief Create a new #Eina_Value initialized with the passed parameter
  * @param obj The object to use
  * @return The #Eina_Value
+ * @see eina_value_object_new(), eina_value_object_get()
  * @since 1.21
  */
 static inline Eina_Value
@@ -2098,6 +2100,26 @@ eina_value_object_init(Eo *obj)
    if (eina_value_setup(&v, EINA_VALUE_TYPE_OBJECT))
      eina_value_set(&v, obj);
    return v;
+}
+
+/**
+ * @brief Get the object contained in an #Eina_Value
+ * @param v The #Eina_Value to extract the object from
+ * @return The object.
+ * @see eina_value_object_new(), eina_value_object_init()
+ * @since 1.21
+ */
+static inline Eo *
+eina_value_object_get(Eina_Value *v)
+{
+   Eo *r = NULL;
+
+   if (!v) return NULL;
+   if (eina_value_type_get(v) != EINA_VALUE_TYPE_OBJECT)
+     return NULL;
+
+   eina_value_pget(v, &r);
+   return r;
 }
 
 /**
