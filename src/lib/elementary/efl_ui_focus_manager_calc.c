@@ -488,25 +488,6 @@ _calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, D
    *neg = NULL;
 
    _calculate_node_stage1(pd, node, rect, dim, pos, neg);
-
-  if (!*pos)
-    {
-       if (dim == DIMENSION_Y)
-         direction = EFL_UI_FOCUS_DIRECTION_DOWN;
-       else
-         direction = EFL_UI_FOCUS_DIRECTION_RIGHT;
-       _calculate_node_stage2(pd, node, rect, direction, pos);
-    }
-
-  if (!*neg)
-    {
-       if (dim == DIMENSION_Y)
-         direction = EFL_UI_FOCUS_DIRECTION_UP;
-       else
-         direction = EFL_UI_FOCUS_DIRECTION_LEFT;
-
-     _calculate_node_stage2(pd, node, rect, direction, neg);
-     }
 }
 
 #ifdef CALC_DEBUG
@@ -567,6 +548,9 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
 {
    Eina_List *x_partners_pos, *x_partners_neg;
    Eina_List *y_partners_pos, *y_partners_neg;
+   Eina_Rect rect;
+
+   rect = efl_ui_focus_object_focus_geometry_get(node->focusable);
 
    _calculate_node(pd, node->focusable, DIMENSION_X, &x_partners_pos, &x_partners_neg);
    _calculate_node(pd, node->focusable, DIMENSION_Y, &y_partners_pos, &y_partners_neg);
@@ -575,6 +559,28 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
    convert_border_set(obj, pd, node, x_partners_neg, EFL_UI_FOCUS_DIRECTION_LEFT);
    convert_border_set(obj, pd, node, y_partners_neg, EFL_UI_FOCUS_DIRECTION_UP);
    convert_border_set(obj, pd, node, y_partners_pos, EFL_UI_FOCUS_DIRECTION_DOWN);
+
+   for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
+     {
+        if (!DIRECTION_ACCESS(node, i).partners)
+          {
+             Eina_List *tmp = NULL;
+             Efl_Ui_Focus_Object *focusable;
+
+             _calculate_node_stage2(pd, node->focusable, rect, i, &tmp);
+
+             EINA_LIST_FREE(tmp, focusable)
+               {
+                  Border *b;
+                  Node *n;
+
+                  b = &DIRECTION_ACCESS(node, i);
+                  n = node_get(obj, pd, focusable);
+                  b->partners = eina_list_append(b->partners, n);
+               }
+
+          }
+     }
 
 #ifdef CALC_DEBUG
    _debug_node(node);
