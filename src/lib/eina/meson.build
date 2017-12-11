@@ -184,8 +184,6 @@ else
   sources += 'eina_file.c'
 endif
 
-sources += eina_mp_sources
-
 #FIXME
 #weird to have here ... but oooooh well and its not correct aaarg
 efl_config_h = configuration_data()

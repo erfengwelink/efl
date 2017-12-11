@@ -24,6 +24,7 @@ endif
 
 module_arch = '@0@-@1@-@2@'.format(host_os, host_machine.cpu_family(), meson.project_version())
 
+#install paths
 dir_prefix    = get_option('prefix')
 dir_sysconf   = join_paths(dir_prefix, get_option('sysconfdir'))
 dir_bin       = join_paths(dir_prefix, get_option('bindir'))
@@ -31,6 +32,7 @@ dir_data      = join_paths(dir_prefix, get_option('datadir'))
 dir_include   = join_paths(dir_prefix, get_option('includedir'))
 dir_lib       = join_paths(dir_prefix, get_option('libdir'))
 
+#local paths
 local_lib = join_paths('src', 'lib')
 local_bin = join_paths('src', 'bin')
 local_module = join_paths('src', 'modules')
@@ -59,6 +61,7 @@ config_h.set_quoted('PACKAGE_DATA_DIR', join_paths(dir_data, meson.project_name(
 config_h.set_quoted('PACKAGE_SYSCONF_DIR', dir_sysconf)
 config_h.set_quoted('BINDIR', dir_bin)
 config_h.set_quoted('DATADIR', dir_data)
+config_h.set10('EFL_HAVE_THREADS', true)
 
 config_dir = include_directories('.')
 
@@ -67,5 +70,7 @@ subdir('header_checks')
 subdir(join_paths(local_module, 'eina'))
 subdir(join_paths(local_lib, 'eina'))
 subdir(join_paths(local_bin, 'eina'))
+
+subdir(join_paths(local_test))
 
 configure_file(output: 'config.h', install: false, configuration: config_h)
