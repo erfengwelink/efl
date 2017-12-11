@@ -310,10 +310,10 @@ public_headers += eina_config_file
 
 unwind = dependency('libunwind')
 
-eina_lib = library('eina', sources,
+eina_lib = shared_library('eina', sources,
                    include_directories : config_dir,
                    dependencies: [m, rt, dl, valgrind, unwind, thread_dep, eina_mem_pools],
-                   link_args : '-DHAVE_LIBUNWIND',
+                   c_args : '-DHAVE_LIBUNWIND',
                    install: true)
 
 eina = declare_dependency(

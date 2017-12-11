@@ -1,4 +1,4 @@
-project('efl', 'c', version: '1.20.99')
+project('efl', ['c','cpp'], version: '1.20.99')
 
 pkgconfig = import('pkgconfig')
 valgrind = dependency('valgrind')
@@ -37,6 +37,7 @@ local_lib = join_paths('src', 'lib')
 local_bin = join_paths('src', 'bin')
 local_module = join_paths('src', 'modules')
 local_test = join_paths('src', 'tests')
+local_benchmark = join_paths('src', 'benchmarks')
 
 add_global_arguments('-DHAVE_CONFIG_H=1', language: 'c')
 add_global_arguments('-D_GNU_SOURCE=1', language: 'c')
@@ -72,6 +73,7 @@ subdir(join_paths(local_lib, 'efl'))
 subdir(join_paths(local_module, 'eina'))
 subdir(join_paths(local_lib, 'eina'))
 subdir(join_paths(local_bin, 'eina'))
+subdir(join_paths(local_benchmark, 'eina'))
 
 subdir(join_paths(local_test))
 
