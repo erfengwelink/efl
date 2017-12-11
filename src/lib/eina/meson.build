@@ -212,9 +212,8 @@ valgrind = dependency('valgrind')
 
 eina_lib = library('eina', sources,
                    include_directories : config_dir,
-                   dependencies: [m, rt, dl, valgrind, unwind, thread_dep],
+                   dependencies: [m, rt, dl, valgrind, unwind, thread_dep, eina_mem_pools],
                    link_args : '-DHAVE_LIBUNWIND',
-                   link_with : [eina_mp_one_big, eina_mp_pass_through, eina_mp_chained_mempool],
                    install: true)
 
 eina = declare_dependency(
