@@ -67,6 +67,8 @@ config_dir = include_directories('.')
 
 subdir('header_checks')
 
+subdir(join_paths(local_lib, 'efl'))
+
 subdir(join_paths(local_module, 'eina'))
 subdir(join_paths(local_lib, 'eina'))
 subdir(join_paths(local_bin, 'eina'))

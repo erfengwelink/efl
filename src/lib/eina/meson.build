@@ -100,7 +100,6 @@ public_sub_headers = [
 
 public_headers = [
   'Eina.h'
-  #TODO config is missing
 ]
 
 sources = [
@@ -184,29 +183,132 @@ else
   sources += 'eina_file.c'
 endif
 
-#FIXME
-#weird to have here ... but oooooh well and its not correct aaarg
-efl_config_h = configuration_data()
-efl_config_h.set('EFL_VERSION_MAJOR', version_major)
-efl_config_h.set('EFL_VERSION_MINOR', version_minor)
-efl_config_h.set('EFL_VERSION_MICRO', version_micro)
-efl_config_h.set('EFL_BUILD_ID', get_option('build-id'))
+eina_config = configuration_data()
 
-#FIXME placeholder
-efl_config_h.set('EFL_API_EO_DEF', '#define EFL_API_EO_DEF "FIXME NOT IMPLEMENTED"')
-efl_config_h.set('EFL_API_LEGACY_DEF', '#define EFL_API_LEGACY_DEF "FIXME NOT IMPLEMENTED"')
+if get_option('buildtype') == 'plain'
+     with_max_log_level=-1
+     stringshare_usage=false
+     use_valgrind=true
+     debug_malloc=false
+     debug_threads=false
+     default_mempool=false
+     want_cow_magic=false
+elif get_option('buildtype') == 'debug'
+     with_max_log_level=-1
+     stringshare_usage=true
+     use_valgrind=true
+     debug_malloc=true
+     debug_threads=true
+     default_mempool=true
+     want_cow_magic=true
+elif get_option('buildtype') == 'release'
+     with_max_log_level=3
+     stringshare_usage=false
+     use_valgrind=false
+     debug_malloc=false
+     debug_threads=false
+     default_mempool=false
+     want_cow_magic=false
+endif
 
-efl_config = configure_file(
-  input: '../efl/Efl_Config.h.in',
-  output: 'Efl_Config.h',
-  configuration: efl_config_h)
+if with_max_log_level != -1
+   config_h.set('EINA_LOG_LEVEL_MAXIMUM', with_max_log_level)
+endif
 
-public_headers += efl_config
+if stringshare_usage
+   config_h.set('EINA_STRINGSHARE_USAGE', 1)
+endif
 
-#end fixme
+if use_valgrind
+   valgrind = dependency('valgrind')
+endif
+
+if debug_malloc
+   config_h.set('EINA_DEBUG_MALLOC', 1)
+endif
+
+if want_cow_magic
+   config_h.set('EINA_COW_MAGIC_ON', 1)
+endif 
+
+if get_option('eina-magic-debug')
+   eina_config.set('EINA_MAGIC_DEBUG', '1')
+endif
+
+if default_mempool
+   eina_config.set('EINA_DEFAULT_MEMPOOL', '1')
+endif
+
+eina_config.set('EINA_SAFETY_CHECKS', '1')
+eina_config.set('EINA_HAVE_THREADS', '1')
+
+if cc.has_header_symbol('pthread.h', 'pthread_attr_setaffinity_np')
+   eina_config.set('EINA_HAVE_PTHREAD_AFFINITY', '1')
+endif
+
+if cc.has_header_symbol('pthread.h', 'pthread_barrier_init')
+   eina_config.set('EINA_HAVE_PTHREAD_BARRIER', '1')
+endif
+
+if cc.has_header_symbol('pthread.h', 'pthread_setname_np')
+   eina_config.set('EINA_HAVE_PTHREAD_SETNAME', '1')
+endif
+
+# FIXME the author of eina_debug probebly never ran with EINA_HAVE_DEBUG_THREADS
+# however eina debug decides to init that lock and never frees it. which means 
+# the code in eina_main.c will not work in the way it currently is there.
+
+#if debug_threads or get_option('debug-threads')
+#   eina_config.set('EINA_HAVE_DEBUG_THREADS', '1')
+#endif
+
+eina_config.set('EINA_SIZEOF_WCHAR_T', cc.sizeof('wchar_t'))
+
+eina_config.set('EINA_SIZEOF_UINTPTR_T', cc.sizeof('uintptr_t'))
+
+if cc.has_header('dirent.h')
+   eina_config.set('EINA_CONFIGURE_HAVE_DIRENT_H', '1')
+endif
+
+eina_config.set('EINA_ENABLE_LOG', '1')
+
+if cc.has_header_symbol('alloca.h', 'alloca')
+   eina_config.set('EINA_HAVE_ALLOCA_H', '1')
+endif
+
+if cc.has_header('byteswap.h')
+   eina_config.set('EINA_HAVE_BYTESWAP_H', '1')
+endif
+
+if cc.has_header_symbol('byteswap.h', 'bswap_16')
+   eina_config.set('EINA_CONFIGURE_HAVE_BSWAP16', '1')
+endif
+
+if cc.has_header_symbol('byteswap.h', 'bswap_32')
+   eina_config.set('EINA_CONFIGURE_HAVE_BSWAP32', '1')
+endif
+
+if cc.has_header_symbol('byteswap.h', 'bswap_64')
+   eina_config.set('EINA_CONFIGURE_HAVE_BSWAP64', '1')
+endif
+
+if cc.has_header_symbol('pthread.h', 'pthread_spin_init')
+   eina_config.set('EINA_HAVE_POSIX_SPINLOCK', '1')
+endif
+
+# FIXME osx spinlock
+
+# FIXME osx semaphore
+
+
+eina_config_file = configure_file(
+  output: 'eina_config.h',
+  configuration: eina_config,
+  install: true)
+
+public_headers += eina_config_file
 
 unwind = dependency('libunwind')
-valgrind = dependency('valgrind')
 
 eina_lib = library('eina', sources,
                    include_directories : config_dir,

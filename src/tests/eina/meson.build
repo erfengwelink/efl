@@ -64,4 +64,6 @@ eina_test_exe = executable('eina_suite',
   '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
 )
 
-test('eina', eina_test_exe)
+test('eina', eina_test_exe,
+	timeout : 100
+)
