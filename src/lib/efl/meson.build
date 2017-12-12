@@ -17,4 +17,6 @@ efl_config_file = configure_file(
 
 install_headers(efl_config_file)
 
+config_dir += include_directories('.')
+
 #end FIXME

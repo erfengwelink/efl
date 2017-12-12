@@ -63,7 +63,7 @@ config_h.set_quoted('BINDIR', dir_bin)
 config_h.set_quoted('DATADIR', dir_data)
 config_h.set10('EFL_HAVE_THREADS', true)
 
-config_dir = include_directories('.')
+config_dir = [include_directories('.')]
 
 subdir('header_checks')
 
