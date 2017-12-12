@@ -1,3 +1,5 @@
+eina_deps = []
+
 public_sub_headers = [
 'eina_promise.h',
 'eina_safety_checks.h',
@@ -221,6 +223,8 @@ endif
 
 if use_valgrind
    valgrind = dependency('valgrind', required: false)
+   eina_deps += valgrind
+   config_h.set('HAVE_VALGRIND', 1)
 endif
 
 if debug_malloc
@@ -301,6 +305,7 @@ endif
 # FIXME osx semaphore
 
 
+
 eina_config_file = configure_file(
   output: 'eina_config.h',
   configuration: eina_config,
@@ -308,12 +313,15 @@ eina_config_file = configure_file(
 
 public_headers += eina_config_file
 
-unwind = dependency('libunwind')
+unwind = dependency('libunwind-generic')
+if unwind.found()
+   config_h.set('HAVE_UNWIND', 1)
+   eina_deps += unwind
+endif
 
 eina_lib = shared_library('eina', sources,
                    include_directories : config_dir,
-                   dependencies: [m, rt, dl, valgrind, unwind, thread_dep, eina_mem_pools],
-                   c_args : '-DHAVE_LIBUNWIND',
+                   dependencies: [m, rt, dl, eina_deps, thread_dep, eina_mem_pools],
                    install: true)
 
 eina = declare_dependency(
