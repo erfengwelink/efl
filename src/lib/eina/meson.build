@@ -233,7 +233,7 @@ endif
 
 if want_cow_magic
    config_h.set('EINA_COW_MAGIC_ON', 1)
-endif 
+endif
 
 if get_option('eina-magic-debug')
    eina_config.set('EINA_MAGIC_DEBUG', '1')
@@ -259,7 +259,7 @@ if cc.has_header_symbol('pthread.h', 'pthread_setname_np')
 endif
 
 # FIXME the author of eina_debug probebly never ran with EINA_HAVE_DEBUG_THREADS
-# however eina debug decides to init that lock and never frees it. which means 
+# however eina debug decides to init that lock and never frees it. which means
 # the code in eina_main.c will not work in the way it currently is there.
 
 #if debug_threads or get_option('debug-threads')
@@ -300,11 +300,15 @@ if cc.has_header_symbol('pthread.h', 'pthread_spin_init')
    eina_config.set('EINA_HAVE_POSIX_SPINLOCK', '1')
 endif
 
-# FIXME osx spinlock
+if target_machine.system() == 'darwin'
+   if cc.has_header_symbol('libkern/OSAtomic.h', 'OSSpinLockTry')
+     eina_config.set('EINA_CONFIGURE_HAVE_OSX_SPINLOCK', 1)
+   endif
+   if cc.has_header_symbol('semaphore.h', 'semaphore_create')
+     eina_config.set('EINA_CONFIGURE_HAVE_OSX_SEMAPHORE', 1)
+   endif
 
-# FIXME osx semaphore
-
-
+endif
 
 eina_config_file = configure_file(
   output: 'eina_config.h',
