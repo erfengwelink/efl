@@ -220,7 +220,7 @@ if stringshare_usage
 endif
 
 if use_valgrind
-   valgrind = dependency('valgrind')
+   valgrind = dependency('valgrind', required: false)
 endif
 
 if debug_malloc
