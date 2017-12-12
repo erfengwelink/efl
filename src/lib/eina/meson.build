@@ -323,7 +323,7 @@ eina_config_file = configure_file(
 
 public_headers += eina_config_file
 
-unwind = dependency('libunwind-generic')
+unwind = dependency('libunwind-generic', required: false)
 if unwind.found()
    config_h.set('HAVE_UNWIND', 1)
    eina_deps += unwind
