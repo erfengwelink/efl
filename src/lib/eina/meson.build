@@ -335,7 +335,7 @@ eina_lib = shared_library('eina', sources,
                    install: true)
 
 eina = declare_dependency(
-  include_directories: [include_directories('.'), config_dir],
+  include_directories: [include_directories('.')] + config_dir,
   dependencies : [thread_dep],
   link_with: eina_lib,
 )
