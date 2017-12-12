@@ -223,6 +223,9 @@ endif
 
 if use_valgrind
    valgrind = dependency('valgrind', required: false)
+   if valgrind.found() == false
+     config_h.set('NVALGRIND', 1)
+   endif
    eina_deps += valgrind
    config_h.set('HAVE_VALGRIND', 1)
 else
