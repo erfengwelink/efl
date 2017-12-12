@@ -1,0 +1,50 @@
+//Efl.Ui.Naviframe Themes
+group { "efl/naviframe";
+   styles {
+      style { name: "naviframe_title_style_ellipsis";
+         base: "font="FNBD" font_size=10 text_class=label align=center color=#fff color_class=naviframe_title_text style=shadow,bottom shadow_color=#00000080 ellipsis=1.0 wrap=mixed";
+         tag: "br" "\n";
+         tag: "hilight" "+ font="FNBD" text_class=label_light";
+         tag: "b" "+ font="FNBD" text_class=label_light";
+         tag: "whitecolor" "+ color=#fff";
+         tag: "tab" "\t";
+      }
+   }
+   parts {
+      alias: "title" "elm.text.title";
+      spacer { "base";
+         desc { "default";
+         }
+      }
+      rect { "title_bg";
+         desc { "default";
+            fixed: 0 1;
+            min: 0 40;
+            rel.to: "base";
+            rel2.relative: 1.0 0.0;
+            align: 0.5 0.0;
+            color: 0 0 0 0;
+         }
+      }
+      textblock { "elm.text.title";
+         scale;
+         desc { "default";
+            //fixed: 0 1;
+            text {
+              style: "naviframe_title_style_ellipsis";
+            }
+            rel.to: "title_bg";
+         }
+      }
+      swallow { "elm.swallow.content";
+         desc { "default";
+            rel1 {
+               to_x: "base";
+               to_y: "title_bg";
+               relative: 0.0 1.0;
+            }
+            rel2.to_x: "base";
+         }
+      }
+   }
+}

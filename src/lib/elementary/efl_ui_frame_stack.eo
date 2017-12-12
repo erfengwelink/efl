@@ -1,0 +1,26 @@
+class Efl.Ui.Frame_Stack (Efl.Ui.Layout)
+{
+   [[Frame Stack
+
+   Frame Stack is a container which manages frames by pushing and poping them.
+   ]]
+   methods {
+      push {
+         [[Push a new object to the top of the frame stack (and show it).
+         ]]
+
+         params {
+            @in frame: Efl.Canvas.Object;
+         }
+      }
+      pop {
+         [[Pop an object that is on top of the frame stack (and delete it).
+         ]]
+
+         return: Efl.Canvas.Object;
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+   }
+}

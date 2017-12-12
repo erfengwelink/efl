@@ -1024,6 +1024,7 @@ elementary/themes/edc/efl/focus.edc \
 elementary/themes/edc/efl/frame.edc \
 elementary/themes/edc/efl/multibuttonentry.edc \
 elementary/themes/edc/efl/nstate.edc \
+elementary/themes/edc/efl/naviframe.edc \
 elementary/themes/edc/efl/panes.edc \
 elementary/themes/edc/efl/photocam.edc \
 elementary/themes/edc/efl/popup.edc \

@@ -1,0 +1,13 @@
+class Efl.Ui.Naviframe (Efl.Ui.Layout, Efl.Content)
+{
+   [[Navigation Frame widget
+
+   The Naviframe widget provides a view form useful for navigation.
+   ]]
+   implements {
+      Efl.Object.constructor;
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
+      Efl.Part.part;
+   }
+}

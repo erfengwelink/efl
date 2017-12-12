@@ -1,0 +1,8 @@
+class Efl.Ui.Naviframe.Part (Efl.Ui.Layout.Part_Text)
+{
+   [[Efl UI Naviframe internal part class]]
+   data: null;
+   implements {
+      Efl.Text.text { get; set; }
+   }
+}
