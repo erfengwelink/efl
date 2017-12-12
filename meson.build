@@ -1,7 +1,6 @@
 project('efl', ['c','cpp'], version: '1.20.99')
 
 pkgconfig = import('pkgconfig')
-valgrind = dependency('valgrind')
 
 version_arr = meson.project_version().split('.')
 
